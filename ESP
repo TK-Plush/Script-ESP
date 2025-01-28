@@ -1,0 +1,78 @@
+-- Create ScreenGui
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player.PlayerGui
+
+-- Create the main frame for the GUI
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 50)
+frame.Position = UDim2.new(1, -210, 0, 10) -- Positioned at the top right
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.BackgroundTransparency = 0.5
+frame.Parent = screenGui
+
+-- Create the TextButton
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(1, 0, 1, 0)
+button.Text = "TK Plush"
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.BackgroundColor3 = Color3.fromRGB(0, 0, 255)  -- Blue color
+button.Parent = frame
+
+-- ESP toggle variable
+local espEnabled = false
+
+-- Function to toggle ESP on/off
+local function toggleESP()
+    espEnabled = not espEnabled
+    if espEnabled then
+        for _, p in pairs(game.Players:GetPlayers()) do
+            if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local espPart = Instance.new("Part")
+                espPart.Size = Vector3.new(2, 5, 2)
+                espPart.Position = p.Character.HumanoidRootPart.Position
+                espPart.Anchored = true
+                espPart.CanCollide = false
+                espPart.Color = Color3.fromRGB(255, 0, 0)  -- Red color
+                espPart.Parent = game.Workspace
+                espPart.Name = "ESPPart"
+
+                -- Optional: Update the position of the ESP part every frame
+                game:GetService("RunService").RenderStepped:Connect(function()
+                    if espPart.Parent == game.Workspace then
+                        espPart.Position = p.Character.HumanoidRootPart.Position
+                    end
+                end)
+            end
+        end
+    else
+        -- Remove all ESP parts when disabled
+        for _, obj in pairs(game.Workspace:GetChildren()) do
+            if obj.Name == "ESPPart" then
+                obj:Destroy()
+            end
+        end
+    end
+end
+
+-- Button click event to toggle ESP
+button.MouseButton1Click:Connect(function()
+    toggleESP()
+end)
+
+-- Create a close button to hide the GUI
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 50, 0, 25)
+closeButton.Position = UDim2.new(1, -60, 0, 10) -- Close button at top-right
+closeButton.Text = "Close"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Red color
+closeButton.Parent = frame
+
+-- Close button functionality
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy() -- Close the GUI
+end)
+
+-- Optional: Set the GUI to close by default
+screenGui.Enabled = true

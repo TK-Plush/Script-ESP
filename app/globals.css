@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+  background: #07070d;
+  color: #e7e7f2;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2c2c4a transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #2c2c4a;
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@layer components {
+  .glass {
+    @apply bg-card/80 backdrop-blur-xl border border-line rounded-2xl;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed select-none;
+  }
+  .btn-primary {
+    @apply btn bg-gradient-to-r from-violet-600 to-cyan-500 text-white hover:brightness-110 px-4 py-2.5 text-sm shadow-lg shadow-violet-900/40;
+  }
+  .btn-ghost {
+    @apply btn border border-line bg-card hover:bg-line/40 px-4 py-2.5 text-sm text-neutral-200;
+  }
+  .btn-danger {
+    @apply btn bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20 px-4 py-2.5 text-sm;
+  }
+  .input {
+    @apply w-full rounded-xl border border-line bg-ink/60 px-3.5 py-2.5 text-sm text-neutral-100 placeholder-neutral-500 outline-none transition focus:border-violet-500/70 focus:ring-2 focus:ring-violet-500/20;
+  }
+  .label {
+    @apply block text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-card px-3 py-1 text-xs text-neutral-300;
+  }
+  .tab {
+    @apply flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition cursor-pointer whitespace-nowrap;
+  }
+  .tab-active {
+    @apply bg-gradient-to-r from-violet-600/25 to-cyan-500/20 text-white border border-violet-500/30;
+  }
+  .tab-idle {
+    @apply text-neutral-400 hover:text-white hover:bg-card border border-transparent;
+  }
+  .card-title {
+    @apply text-sm font-bold text-white tracking-wide;
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent;
+  }
+  .skeleton {
+    @apply bg-gradient-to-r from-card via-line to-card bg-[length:200%_100%] animate-shimmer rounded-xl;
+  }
+  .markdown-body {
+    @apply text-[13.5px] leading-relaxed space-y-3;
+  }
+  .markdown-body h1,
+  .markdown-body h2,
+  .markdown-body h3 {
+    @apply font-bold text-white mt-1;
+  }
+  .markdown-body h2 {
+    @apply text-base;
+  }
+  .markdown-body h3 {
+    @apply text-sm;
+  }
+  .markdown-body p {
+    @apply text-neutral-300;
+  }
+  .markdown-body ul {
+    @apply list-disc pl-5 space-y-1 text-neutral-300;
+  }
+  .markdown-body ol {
+    @apply list-decimal pl-5 space-y-1 text-neutral-300;
+  }
+  .markdown-body strong {
+    @apply text-white font-bold;
+  }
+  .markdown-body em {
+    @apply text-fuchsia-300;
+  }
+  .markdown-body code {
+    @apply font-mono text-[12px] text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 rounded px-1.5 py-0.5;
+  }
+  .markdown-body pre {
+    @apply bg-ink border border-line rounded-xl p-3 overflow-x-auto text-[12px] leading-relaxed;
+  }
+  .markdown-body pre code {
+    @apply bg-transparent border-0 p-0 text-neutral-100;
+  }
+  .markdown-body blockquote {
+    @apply border-l-4 border-violet-500/50 pl-3 text-neutral-400 italic;
+  }
+  .markdown-body table {
+    @apply border-collapse text-left text-[12.5px];
+  }
+  .markdown-body th,
+  .markdown-body td {
+    @apply border border-line px-2.5 py-1.5;
+  }
+  .markdown-body th {
+    @apply bg-card text-white;
+  }
+  .shine {
+    background: linear-gradient(110deg, transparent 20%, rgba(139, 92, 246, 0.12) 40%, rgba(34, 211, 238, 0.12) 60%, transparent 80%);
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
+  }
+}

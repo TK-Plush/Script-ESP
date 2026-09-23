@@ -1,40 +1,44 @@
-# BreachLookup
+# 🎬 CineForge AI — Free Forever AI Movie & Video Studio
 
-OSINT / data-breach tool. Python CLI + click-server backend + GitHub Pages control panel.
+Chat with a smart AI movie director, build character memory, and generate cinematic videos with **all Seedance model versions** (ByteDance) — completely unlimited, **no credits, no paywall, free forever**.
 
-## Website (GitHub Pages)
+## ✨ Features
 
-- **Lookup** – client-side password breach check (HIBP k-anonymity), email check, fingerprint demo
-- **Gen Link / QR** – create shortened tracking link + QR pointing at your backend
-- **Click Capture** – served by your Python server; fingerprints the device, grabs saved email/phone via autofill, POSTs to `/report`
+- 💬 **Smart AI movie chat** — CineBrain writes screenplays, shot lists, and Seedance-ready prompts.
+- 🧠 **Character memory** — save characters once; they stay consistent across chat, scripts, and video prompts.
+- 🎥 **All Seedance versions** — Seedance 2.5, 2.0 / Fast / Mini, 1.5 Pro (audio), 1.0 Pro / Fast / Lite. Text→Video, Image→Video, Reference→Video.
+- 🔗 **Accounts** — Google connect + email/password accounts (hashed locally, PBKDF2).
+- 💬 **Unlimited chats** with full history, new chat anytime.
+- ⚡ **FREE FOREVER** — no credit system. Works out of the box in Free Demo Mode, and upgrades to real Seedance generation the moment you add a key.
 
-## Run the backend (click-server)
-
-```bash
-pip install requests
-python3 breach_lookup.py serve --email alert@yourdevice.com --port 8080
-# expose it:
-ngrok http 8080
-```
-
-Then open the Gen Link page, paste your ngrok URL, optionally add a breach-check target email, hit Generate — send the QR/link to the device. On click: fingerprint + breach lookup → terminal + email + `clicks.jsonl`.
-
-## One-off lookups
+## 🚀 Deploy to Vercel
 
 ```bash
-python3 breach_lookup.py lookup victim@example.com --email alert@you.com --json
-python3 breach_lookup.py lookup https://site.com
-python3 breach_lookup.py genlink --base https://abc.ngrok.io --target victim@x.com
+npm install
+npm run build
+npx vercel --prod --token YOUR_VERCEL_TOKEN --yes
 ```
 
-## API keys (env)
+## 🔑 Optional environment variables (add in Vercel → Project → Settings → Environment Variables)
 
-| Key | Source |
+| Variable | Purpose |
 |---|---|
-| `HIBP_API_KEY` | haveibeenpwned.com |
-| `LEAKIX_API_KEY` | leakix.net |
-| `DEHASHED_API_KEY` + `DEHASHED_EMAIL` | dehashed.com |
-| `VT_API_KEY` | virustotal.com |
-| `SMTP_USER` / `SMTP_PASS` | your mail sender |
+| `FAL_KEY` | fal.ai API key → enables **real Seedance generation** (all versions). Get one at fal.ai. Without it the app runs Free Demo Mode with sample clips. |
+| `OPENAI_API_KEY` | Makes chat replies much smarter (GPT-4o-mini). Optional — a built-in offline screenwriting engine works with zero keys. |
+| `OPENAI_BASE_URL` | Optional: any OpenAI-compatible endpoint (e.g. Groq, OpenRouter, llama.cpp). |
+| `OPENAI_MODEL` | Default `gpt-4o-mini`. |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Enables real Google OAuth one-tap sign-in (Google Cloud Console → Credentials → OAuth client → Web app; add your Vercel domain to authorized origins). Without it, Google connect uses a demo link. |
 
-Reports print to terminal (colored), email to the device address, and append to `clicks.jsonl`. Exit code 1 = breach hit.
+Add keys non-interactively, e.g.:
+
+```bash
+echo "YOUR_FAL_KEY" | npx vercel env add FAL_KEY production --token YOUR_VERCEL_TOKEN
+```
+
+## 🧠 How "free forever" works
+
+- All accounts, chats, memory, and history live in your browser — zero infrastructure cost.
+- `/api/video` proxies to the Seedance queue on fal.ai when `FAL_KEY` is set.
+- Without a key, the studio runs in **Free Demo Mode**: every render returns instantly, free, unlimited, forever.
+
+Built with Next.js 14 · Tailwind · zero backend dependencies.

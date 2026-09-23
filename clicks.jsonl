@@ -1,0 +1,60 @@
+{
+  "ip": "127.0.0.1",
+  "device": "iPhone; CPU iPhone OS 17_0 like Mac OS X",
+  "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
+  "referer": "",
+  "path": "/",
+  "time": "2026-09-23T07:27:37.791729",
+  "message": "reserved range",
+  "query": "127.0.0.1"
+}
+{
+  "ip": "127.0.0.1",
+  "device": "iPhone",
+  "user_agent": "Mozilla/5.0 (iPhone)",
+  "referer": "",
+  "path": "/",
+  "time": "2026-09-23T07:27:44.582948",
+  "message": "reserved range",
+  "query": "127.0.0.1"
+}
+{
+  "ip": "127.0.0.1",
+  "device": "Windows NT 10.0; Win64; x64",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "referer": "https://github.com/",
+  "path": "/",
+  "time": "2026-09-23T07:27:53.446411",
+  "message": "reserved range",
+  "query": "127.0.0.1"
+}
+{
+  "ip": "127.0.0.1",
+  "device": "Windows NT 10.0; Win64; x64",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "referer": "https://glowing-space-funicular-7v5xr4r5j5pxfwr-8765.app.github.dev/",
+  "path": "/favicon.ico",
+  "time": "2026-09-23T07:27:53.692536",
+  "message": "reserved range",
+  "query": "127.0.0.1"
+}
+{
+  "ip": "127.0.0.1",
+  "device": "iPhone; CPU iPhone OS 17_0 like Mac OS X",
+  "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
+  "referer": "",
+  "path": "/?q=victim@mail.com",
+  "time": "2026-09-23T07:28:11.458571",
+  "message": "reserved range",
+  "query": "127.0.0.1"
+}
+{
+  "email": "victim@x.com",
+  "phone": "+15551234567",
+  "device": "iPhone 14 Pro",
+  "canvas_hash": "abc",
+  "ip": "127.0.0.1",
+  "time": "2026-09-23T07:31:48.230912",
+  "user_agent": "curl/8.5.0",
+  "referer": ""
+}

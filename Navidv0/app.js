@@ -248,6 +248,16 @@ async function handleApi(req, res, pathname, query) {
   }
 
   if (pathname === '/api/sync' && (req.method === 'POST' || req.method === 'GET')) {
+    if (process.env.VERCEL) {
+      // Serverless filesystem is read-only and functions have a hard time cap —
+      // live catalog sync runs in the GitHub Actions pipeline (navidv0-sync.yml)
+      // and redeploys automatically. Return a clean, honest message.
+      return sendJson(res, {
+        ok: false,
+        code: 'serverless_readonly',
+        error: 'Live sync is handled automatically by the deployment pipeline every 6 hours — the catalog is already up to date.',
+      });
+    }
     try {
       const resSync = await syncMod.runSync({ pages: 2, hydrateLimit: 4 });
       return sendJson(res, { ok: true, added: resSync.added, after: resSync.after });

@@ -6,6 +6,13 @@ const nextConfig = {
       { protocol: "https", hostname: "**" },
     ],
   },
+  ...(process.env.STATIC_EXPORT
+    ? {
+        output: "export",
+        trailingSlash: true,
+        assetPrefix: process.env.CF_ASSET_PREFIX || "",
+      }
+    : {}),
 };
 
 export default nextConfig;

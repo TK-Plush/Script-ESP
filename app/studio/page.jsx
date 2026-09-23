@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Md from "../../components/md";
-import { MODELS, MODEL_BY_ID, DURATIONS, RESOLUTIONS, ASPECTS, isImageMode, isRefMode } from "../../lib/models";
-import { enhancePrompt } from "../../lib/engine";
+import { MODELS, MODEL_BY_ID, DURATIONS, RESOLUTIONS, ASPECTS, SAMPLE_VIDEOS } from "../../lib/models";
+import { enhancePrompt, smartReply } from "../../lib/engine";
 import {
   register,
   login,
@@ -158,6 +158,7 @@ export default function Studio() {
     const msgs = activeChat ? [...activeChat.msgs, userMsg] : [userMsg];
     setActiveChatMsgs(msgs);
     setTyping(true);
+    let data = null;
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -169,15 +170,24 @@ export default function Studio() {
           memory: "",
         }),
       });
-      const data = await res.json();
+      data = await res.json();
       if (!res.ok) throw new Error(data.error || "Chat failed");
+    } catch (e) {
+      // Offline fallback: run the built-in CineBrain engine right here.
+      data = smartReply(
+        msgs.slice(-20).map(({ role, content }) => ({ role, content })),
+        characters,
+        ""
+      );
+    }
+    try {
       let content = data.content || "…";
       if (data.autoSaveCharacter) {
         setCharacters((cs) => {
           const existing = cs.some((c) => c.name.toLowerCase() === data.autoSaveCharacter.name.toLowerCase());
           return existing ? cs : [...cs, { ...data.autoSaveCharacter, id: uid("ch") }];
         });
-        if (!csHas(data.autoSaveCharacter.name)) toast(`🧠 Saved "${data.autoSaveCharacter.name}" to Memory`, "ok");
+        toast(`🧠 Saved "${data.autoSaveCharacter.name}" to Memory`, "ok");
       }
       const assistantMsg = {
         id: uid("m"),
@@ -187,17 +197,15 @@ export default function Studio() {
         ts: Date.now(),
       };
       setActiveChatMsgs([...msgs, assistantMsg]);
-    } catch (e) {
-      const errMsg = { id: uid("m"), role: "assistant", content: `⚠️ ${e.message}`, ts: Date.now() };
+    } catch (e2) {
+      const errMsg = { id: uid("m"), role: "assistant", content: `⚠️ ${e2.message}`, ts: Date.now() };
       setActiveChatMsgs([...msgs, errMsg]);
     } finally {
       setTyping(false);
     }
   };
 
-  const csHas = (name) => characters.some((c) => c.name.toLowerCase() === String(name).toLowerCase());
-
-  // —— generation ——
+// —— generation ——
   const initForm = () => ({
     modelId: MODELS[0].id,
     prompt: "",
@@ -262,6 +270,7 @@ export default function Studio() {
       setGens((gs) => [task, ...gs]);
       setTab("generate");
 
+      let data = null;
       try {
         const res = await fetch("/api/video", {
           method: "POST",
@@ -287,73 +296,76 @@ export default function Studio() {
             },
           }),
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to start generation");
-
-        if (data.demo) {
-          updateGen(task.id, { status: "rendering", demo: true, statusText: "Rendering (Free Demo)…", progress: 8 });
-          const steps = [
-            [22, 900],
-            [45, 1100],
-            [67, 1200],
-            [86, 1000],
-            [100, 1200],
-          ];
-          for (const [pct, ms] of steps) {
-            await sleep(ms);
-            updateGen(task.id, { progress: pct });
-          }
-          updateGen(task.id, {
-            status: "done",
-            videoUrl: data.demoUrl,
-            seed: "free-demo",
-            statusText: "Ready",
-            progress: 100,
-          });
-        } else {
-          updateGen(task.id, { status: "queued", statusText: "Queued on fal…", requestId: data.requestId });
-          let finished = false;
-          let tries = 0;
-          while (!finished && tries < 120) {
-            await sleep(3000);
-            tries++;
-            let poll;
-            try {
-              poll = await fetch(`/api/video?statusUrl=${encodeURIComponent(data.statusUrl)}`).then((r) => r.json());
-            } catch {
-              continue;
-            }
-            if (!poll.ok) {
-              updateGen(task.id, { statusText: "Polling…" });
-              continue;
-            }
-            if (poll.status === "COMPLETED") {
-              const vurl = poll.result?.video?.url || poll.result?.url;
-              updateGen(task.id, {
-                status: "done",
-                videoUrl: vurl,
-                seed: poll.result?.seed,
-                statusText: "Ready",
-                progress: 100,
-                meta: poll.result || null,
-              });
-              finished = true;
-            } else if (poll.status === "ERROR") {
-              throw new Error("Generation failed (model returned error status).");
-            } else {
-              const pos = poll.queuePosition;
-              const msg = poll.raw?.logs?.[0]?.message || (pos > 1 ? `In queue #${pos}…` : "Rendering…");
-              updateGen(task.id, { statusText: msg, progress: Math.min(90, 10 + tries * 3) });
-            }
-          }
-          if (!finished) throw new Error("Timed out while waiting (queue is busy). Try again.");
-        }
+        const j = await res.json();
+        if (!res.ok) throw new Error(j.error || "Failed to start generation");
+        data = j;
       } catch (e) {
-        updateGen(task.id, { status: "error", error: e.message || "Generation failed" });
+        // Fully offline fallback — free demo render, zero infrastructure.
+        data = { demo: true, demoUrl: SAMPLE_VIDEOS[Math.floor(Math.random() * SAMPLE_VIDEOS.length)] };
       }
+      pollGen(task.id, data);
     },
     [form]
   );
+
+  const pollGen = async (taskId, data) => {
+    try {
+      if (data.demo) {
+        updateGen(taskId, { status: "rendering", demo: true, statusText: "Rendering (Free Demo)…", progress: 8 });
+        const steps = [
+          [22, 900],
+          [45, 1100],
+          [67, 1200],
+          [86, 1000],
+          [100, 1200],
+        ];
+        for (const [pct, ms] of steps) {
+          await sleep(ms);
+          updateGen(taskId, { progress: pct });
+        }
+        updateGen(taskId, { status: "done", videoUrl: data.demoUrl, seed: "free-demo", statusText: "Ready", progress: 100 });
+      } else {
+        updateGen(taskId, { status: "queued", statusText: "Queued on fal…", requestId: data.requestId });
+        let finished = false;
+        let tries = 0;
+        while (!finished && tries < 120) {
+          await sleep(3000);
+          tries++;
+          let poll;
+          try {
+            poll = await fetch(`/api/video?statusUrl=${encodeURIComponent(data.statusUrl)}`).then((r) => r.json());
+          } catch {
+            continue;
+          }
+          if (!poll.ok) {
+            updateGen(taskId, { statusText: "Polling…" });
+            continue;
+          }
+          if (poll.status === "COMPLETED") {
+            const vurl = poll.result?.video?.url || poll.result?.url;
+            updateGen(taskId, {
+              status: "done",
+              videoUrl: vurl,
+              seed: poll.result?.seed,
+              statusText: "Ready",
+              progress: 100,
+              meta: poll.result || null,
+            });
+            finished = true;
+          } else if (poll.status === "ERROR") {
+            throw new Error("Generation failed (model returned error status).");
+          } else {
+            const pos = poll.queuePosition;
+            const msg = poll.raw?.logs?.[0]?.message || (pos > 1 ? `In queue #${pos}…` : "Rendering…");
+            updateGen(taskId, { statusText: msg, progress: Math.min(90, 10 + tries * 3) });
+          }
+        }
+        if (!finished) throw new Error("Timed out while waiting (queue is busy). Try again.");
+      }
+    } catch (e) {
+      updateGen(taskId, { status: "error", error: e.message || "Generation failed" });
+    }
+  };
 
   const sendToGenerate = (prompt, modelId) => {
     setForm((f) => ({ ...f, prompt, modelId: modelId || f.modelId }));
@@ -386,7 +398,10 @@ export default function Studio() {
         toast("✨ Prompt enhanced", "ok");
       }
     } catch (e) {
-      toast(e.message, "err");
+      // Offline fallback — enhance locally with the built-in engine.
+      const better = enhancePrompt(form.prompt, characters);
+      setForm((f) => ({ ...f, prompt: better }));
+      toast("✨ Enhanced locally (offline engine)", "ok");
     }
   };
 

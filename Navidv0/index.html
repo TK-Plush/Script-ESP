@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navidv0 — Watch Free Movies</title>
+<meta name="description" content="Navidv0 — watch free movies online in HD. Auto-updated daily. No ads.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+</head>
+<body>
+<div class="bg-aurora" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="grain"></div>
+</div>
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="/" class="logo" data-link data-path="/">
+      <svg class="logo-icon" viewBox="0 0 48 48" width="36" height="36" fill="none">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#00f0ff"/>
+            <stop offset=".55" stop-color="#8b5cf6"/>
+            <stop offset="1" stop-color="#ff2d95"/>
+          </linearGradient>
+        </defs>
+        <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#lg1)" opacity=".18"/>
+        <rect x="2" y="2" width="44" height="44" rx="12" stroke="url(#lg1)" stroke-width="2.5"/>
+        <path d="M14 34 V14 l20 20 V14" stroke="url(#lg1)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="logo-text">NAVID<em>V0</em></span>
+    </a>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="/" class="nav-link" data-link data-path="/">Home</a>
+      <a href="/movies" class="nav-link" data-link data-path="/movies">Movies</a>
+      <a href="/tv" class="nav-link" data-link data-path="/tv">TV Series</a>
+      <a href="/18" class="nav-link nav-18" data-link data-path="/18">18+</a>
+      <div class="nav-dropdown">
+        <button class="nav-link dropdown-btn" type="button">Browse <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+        <div class="dropdown-panel glass">
+          <div class="dd-group"><div class="dd-label">Genres</div><div id="ddGenres" class="dd-chips"></div></div>
+          <div class="dd-group"><div class="dd-label">Years</div><div id="ddYears" class="dd-chips"></div></div>
+          <div class="dd-group"><div class="dd-label">Countries</div><div id="ddCountries" class="dd-chips"></div></div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="nav-actions">
+      <form class="searchbox" id="searchForm" autocomplete="off">
+        <svg class="sicon" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="searchInput" type="search" placeholder="Search movies, genres, actors…" aria-label="Search">
+      </form>
+      <button class="sync-btn" id="syncBtn" type="button" title="Check for new movies">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4h-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="burger" id="burgerBtn" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="app">
+  <div id="view" class="view"><div class="loader-wrap"><div class="loader-ring"></div><p class="loader-text">Loading the grid…</p></div></div>
+</main>
+
+<footer class="site-footer">
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <span class="logo-text">NAVID<em>V0</em></span>
+      <p>Watch free movies online in HD. Zero ads, auto-updated. New releases land here automatically from the source catalog.</p>
+    </div>
+    <div class="foot-meta">
+      <div><span id="footCount">0</span> titles indexed</div>
+      <div>Last sync: <span id="footSync">—</span></div>
+    </div>
+  </div>
+  <div class="foot-bar">© <span id="yearNow"></span> Navidv0. Content served for fair-use / personal viewing only — all rights belong to their respective owners.</div>
+</footer>
+
+<!-- 18+ confirm modal -->
+<div class="modal-backdrop" id="ageModal" hidden>
+  <div class="modal-card glass">
+    <div class="modal-18-badge">18+</div>
+    <h2>Adult Content</h2>
+    <p>This title is rated <b>18+</b>. Its poster and player are blurred until you confirm you are an adult.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="ageNo" type="button">I'm not 18</button>
+      <button class="btn btn-primary" id="ageYes" type="button">I'm 18+ — Reveal</button>
+    </div>
+  </div>
+</div>
+
+<!-- pending reveal payload -->
+<div id="pendingReveal" hidden></div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

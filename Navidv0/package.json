@@ -1,0 +1,16 @@
+{
+  "name": "navidv0",
+  "version": "1.0.0",
+  "description": "Navidv0 - auto-updating free movie streaming site (mirrors jaikonmovie.com content)",
+  "main": "server.js",
+  "scripts": {
+    "sync": "node sync.js",
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

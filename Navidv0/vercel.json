@@ -1,6 +1,22 @@
 {
   "functions": {
-    "api/[...path].js": {
+    "api/state.js": {
+      "includeFiles": "data/db.json",
+      "maxDuration": 15
+    },
+    "api/movies.js": {
+      "includeFiles": "data/db.json",
+      "maxDuration": 15
+    },
+    "api/slider.js": {
+      "includeFiles": "data/db.json",
+      "maxDuration": 15
+    },
+    "api/sync.js": {
+      "includeFiles": "data/db.json",
+      "maxDuration": 15
+    },
+    "api/movie/[slug].js": {
       "includeFiles": "data/db.json",
       "maxDuration": 15
     }

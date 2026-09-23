@@ -43,4 +43,5 @@ jobs:
 
       - name: Deploy to Vercel
         working-directory: Navidv0
+        if: secrets.VERCEL_TOKEN != ''
         run: npx --yes vercel --token ${{ secrets.VERCEL_TOKEN }} --prod --yes
